@@ -13,7 +13,7 @@
 
 ### 배포 링크
 
-https://gemini.google.com/share/81d43e58dcbd
+https://gemini.google.com/share/dbcb6c9da943
 
 ### 이 앱을 만든 이유
 
