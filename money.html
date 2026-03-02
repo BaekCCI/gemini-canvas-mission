@@ -496,19 +496,30 @@
 
       function validatePage(page) {
         if (page === 1) {
-          const validNames = state.participants
-            .map((p) => p.trim())
-            .filter((p) => p !== "");
-          if (validNames.length < MIN_PARTICIPANTS) {
+          for (let i = 0; i < state.participants.length; i++) {
+            const name = state.participants[i].trim();
+            if (name.length < 1 || name.length > 5) {
+              showToast(`참가자 ${i + 1}의 이름을 1~5자로 입력해주세요.`);
+              return false;
+            }
+          }
+
+          // 유효한 이름만 남기기 (공백 제거 적용)
+          state.participants = state.participants.map((p) => p.trim());
+
+          if (state.participants.length < MIN_PARTICIPANTS) {
             showToast(`이름을 최소 ${MIN_PARTICIPANTS}명 이상 입력해주세요.`);
             return false;
           }
-          // 유효한 이름만 남기기
-          state.participants = validNames;
           renderParticipants();
         } else if (page === 2) {
           if (state.totalAmount <= 0) {
             showToast("총 결제 금액을 입력해주세요.");
+            els.totalAmountInput.focus();
+            return false;
+          }
+          if (state.totalAmount > 1000000) {
+            showToast("총 결제 금액은 최대 100만원까지 가능합니다.");
             els.totalAmountInput.focus();
             return false;
           }
@@ -546,10 +557,18 @@
           const input = document.createElement("input");
           input.type = "text";
           input.value = name;
-          input.placeholder = `참가자 ${index + 1} 이름`;
+          input.placeholder = `참가자 ${index + 1} 이름 (최대 5자)`;
           input.className =
             "flex-1 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow outline-none";
-          input.oninput = (e) => updateParticipantName(index, e.target.value);
+          input.oninput = (e) => {
+            let val = e.target.value;
+            if (val.length > 5) {
+              val = val.substring(0, 5);
+              e.target.value = val;
+              showToast("이름은 최대 5글자까지 입력 가능합니다.");
+            }
+            updateParticipantName(index, val);
+          };
 
           row.appendChild(input);
 
@@ -711,6 +730,10 @@
       // 총 금액 입력 처리
       els.totalAmountInput.addEventListener("input", (e) => {
         let val = parseMoney(e.target.value);
+        if (val > 1000000) {
+          val = 1000000;
+          showToast("최대 100만원까지만 입력 가능합니다.");
+        }
         e.target.value = val === 0 ? "" : formatMoney(val);
         state.totalAmount = val;
       });
