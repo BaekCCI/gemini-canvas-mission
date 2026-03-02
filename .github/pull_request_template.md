@@ -37,7 +37,7 @@ https://gemini.google.com/share/dbcb6c9da943
 
 ### 배포 링크
 
-https://gemini.google.com/share/033be5bbf838
+https://gemini.google.com/share/f90e6e224dc3
 
 ### 이 앱을 만든 이유
 
